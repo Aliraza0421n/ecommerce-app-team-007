@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Awesome Store Products!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa; /* Light, soft background */
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #007bff; /* A nice primary color */
+            font-weight: 300; /* Lighter font weight */
+        }
+
+        .product-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+
+        .product-card {
+            background-color: #fff;
+            border-radius: 10px; /* Softer rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); /* Gentle shadow */
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s ease-in-out; /* Smooth hover effect */
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px); /* Slight lift on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .product-card img {
+            max-width: 80%; /* Slightly smaller image */
+            height: auto;
+            max-height: 180px; /* Adjusted max height */
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .product-card h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 1.1em; /* Slightly smaller title */
+            color: #28a745; /* A friendly green for titles */
+            font-weight: 500;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .product-card .price {
+            font-weight: bold;
+            color: #dc3545; /* A noticeable color for price */
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+
+        .product-card p {
+            font-size: 0.95em;
+            color: #6c757d; /* Softer text color */
+            margin-bottom: 15px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            line-height: 1.6; /* Better readability */
+        }
+
+        .loading-message {
+            text-align: center;
+            font-style: italic;
+            color: #6c757d;
+            padding: 20px;
+        }
+
+        .error-message {
+            text-align: center;
+            color: #dc3545;
+            font-weight: bold;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Our Wonderful Products!</h1>
+    <div class="product-container" id="productsContainer">
+        <p class="loading-message">Just a moment, fetching amazing products for you...</p>
+    </div>
+
+    <script>
+        const productsContainer = document.getElementById('productsContainer');
+        const apiUrl = 'https://fakestoreapi.com/products';
+
+        async function fetchProducts() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`Oh no! Something went wrong: ${response.status}`);
+                }
+                const products = await response.json();
+                displayProducts(products);
+            } catch (error) {
+                console.error('Oops! Could not fetch products:', error);
+                productsContainer.innerHTML = `<p class="error-message">Sorry, we couldn't load the products right now. Please try again later!</p>`;
+            }
+        }
+
+        function displayProducts(products) {
+            productsContainer.innerHTML = ''; // Clear the loading message
+
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.classList.add('product-card');
+
+                const image = document.createElement('img');
+                image.src = product.image;
+                image.alt = product.title;
+
+                const title = document.createElement('h3');
+                title.textContent = product.title;
+
+                const price = document.createElement('p');
+                price.classList.add('price');
+                price.textContent = `$${product.price.toFixed(2)}`;
+
+                const description = document.createElement('p');
+                description.textContent = product.description;
+
+                card.appendChild(image);
+                card.appendChild(title);
+                card.appendChild(price);
+                card.appendChild(description);
+
+                productsContainer.appendChild(card);
+            });
+        }
+
+        fetchProducts();
+    </script>
+</body>
+</html>
